@@ -36,7 +36,7 @@ Located in `/agent/` directory:
 | Auth | Replit Auth (OIDC), Passport.js |
 | Security | Helmet, CORS, express-rate-limit |
 | Voice Agent | livekit-agents, livekit-plugins-deepgram, livekit-plugins-openai |
-| Payments | Stripe (payment links) |
+| Payments | Twilio Pay (DTMF keypad capture) |
 
 ## Environment Variables
 
@@ -107,7 +107,7 @@ Logs show which model was used for each call.
 - `POST /api/orders` - Create order (public for voice agent)
 - `PATCH /api/orders/:id` - Update order
 - `PATCH /api/orders/:id/status` - Update order status
-- `POST /api/orders/:id/payment-link` - Send payment link (requires auth or agent API key)
+- `POST /api/orders/:id/payment-dtmf` - Start Twilio Pay DTMF payment flow (requires auth or agent API key)
 
 ### Order Items (multi-item order support)
 - `GET /api/orders/:id/items` - Get order items (public for voice agent)
@@ -149,7 +149,7 @@ Logs show which model was used for each call.
 1. **Create Order** - Takes matzah orders with customer details
 2. **Check Order Status** - Lookup orders by phone number
 3. **Get Customer History** - Check if caller has ordered before and offer their previous order
-4. **Send Payment Link** - Sends secure Stripe payment link via SMS
+4. **Collect DTMF Payment** - Runs Twilio Pay keypad flow during the call (no internet link required)
 5. **Transfer to Office** - SIP REFER transfer to office line
 6. **Get Bakery Info** - Hours, location, contact (uses dynamic settings)
 7. **Get Menu** - Matzah types and prices (uses dynamic settings)
