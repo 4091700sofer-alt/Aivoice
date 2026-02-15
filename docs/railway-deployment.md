@@ -71,3 +71,18 @@ Use separate services for cleaner operations:
 - **postgres**: Railway managed PostgreSQL
 
 If deploying agent separately, set its start command to your agent runtime entrypoint and share the same `DATABASE_URL` + API keys.
+
+## 8) Smoke Tests After Deploy
+Run against your Railway domain:
+
+```bash
+curl -s https://<your-domain>/healthz
+```
+
+Create a test order:
+
+```bash
+curl -s -X POST https://<your-domain>/api/orders \
+  -H 'content-type: application/json' \
+  -d '{"customerName":"Test Caller","phone":"+17185550000","items":[{"name":"Regular Matzah","qty":1}],"totalCents":2500}'
+```

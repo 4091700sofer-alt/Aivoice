@@ -244,3 +244,15 @@ Quick commands:
 - Build: `npm ci && npm run build`
 - Start: `npm run start`
 - Migrate DB: `npm run db:push`
+
+
+## Implemented Backend (Current Repo)
+
+The repository now includes a runnable Express backend in `server/index.ts` with:
+- `GET /healthz`
+- `POST /api/orders`
+- `GET /api/orders/:id`
+- `POST /api/orders/:id/payment-dtmf` (Twilio `<Pay>` TwiML response)
+- `POST /api/orders/:id/payment-dtmf/callback`
+
+Database bootstrap is in `server/db.ts` (auto-creates `orders` table on startup).
