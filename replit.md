@@ -254,5 +254,9 @@ The repository now includes a runnable Express backend in `server/index.ts` with
 - `GET /api/orders/:id`
 - `POST /api/orders/:id/payment-dtmf` (Twilio `<Pay>` TwiML response)
 - `POST /api/orders/:id/payment-dtmf/callback`
+- `POST /api/twilio/voice`
+- `POST /api/twilio/voice/route-payment`
 
 Database bootstrap is in `server/db.ts` (auto-creates `orders` table on startup).
+
+Protected API routes now require `AGENT_API_KEY` via `x-agent-api-key` or `Authorization: Bearer`. Twilio webhook routes validate `X-Twilio-Signature`.

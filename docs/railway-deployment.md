@@ -23,6 +23,7 @@ Set these on the deployed web service:
 - `DATABASE_URL` (auto-provided when Postgres is attached)
 - `SESSION_SECRET`
 - `NODE_ENV=production`
+- `BASE_URL=https://<your-domain>` (required for Twilio signature verification)
 
 ### Voice + AI
 - `LIVEKIT_URL`
@@ -39,7 +40,7 @@ Set these on the deployed web service:
 - `TWILIO_PAY_CONNECTOR`
 
 ### Optional Security
-- `AGENT_API_KEY`
+- `AGENT_API_KEY` (required in production for protected API endpoints)
 
 ## 4) Database Migration
 After first deploy, open Railway service shell and run:
@@ -55,6 +56,7 @@ This applies Drizzle schema changes to Railway PostgreSQL.
 2. Point Twilio Voice webhook to your production endpoint (example):
    - `https://<your-domain>/api/twilio/voice`
 3. If you use status callbacks, configure Twilio status callback URLs to your production domain.
+4. Twilio signatures are validated on webhook routes; keep `BASE_URL` accurate.
 
 ## 6) Production Validation Checklist
 - Service boots without missing env errors.
@@ -84,5 +86,6 @@ Create a test order:
 ```bash
 curl -s -X POST https://<your-domain>/api/orders \
   -H 'content-type: application/json' \
+  -H 'x-agent-api-key: <AGENT_API_KEY>' \
   -d '{"customerName":"Test Caller","phone":"+17185550000","items":[{"name":"Regular Matzah","qty":1}],"totalCents":2500}'
 ```
