@@ -235,3 +235,12 @@ The voice agent fetches fresh settings from `/api/business-settings` on each new
 ## Production Readiness
 
 Use `docs/production-readiness-plan.md` as the release gate for production rollout. The legacy MVP plan is deprecated.
+
+## Deploying to Railway (PostgreSQL)
+
+Use `railway.json` for build/start defaults and follow `docs/railway-deployment.md` for production setup.
+
+Quick commands:
+- Build: `npm ci && npm run build`
+- Start: `npm run start`
+- Migrate DB: `npm run db:push`
