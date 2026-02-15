@@ -55,6 +55,12 @@ Located in `/agent/` directory:
 ### Optional Security
 - `AGENT_API_KEY` - API key for voice agent to access protected endpoints
 
+### Twilio Payments (Required for DTMF collection)
+- `TWILIO_ACCOUNT_SID` - Twilio account SID for voice + payments
+- `TWILIO_AUTH_TOKEN` - Twilio auth token
+- `TWILIO_PHONE_NUMBER` - Twilio voice number receiving orders
+- `TWILIO_PAY_CONNECTOR` - Twilio Pay connector name for DTMF collection
+
 ### Optional
 - `POWER_AUTOMATE_URL` - Microsoft Power Automate webhook URL
 - `OFFICE_TRANSFER_NUMBER` - Phone number for SIP transfers (default: +17185551234)
@@ -224,3 +230,8 @@ The voice agent fetches fresh settings from `/api/business-settings` on each new
 - Google Calendar: Uses shared calendar from burechspitzer@gmail.com
 - Connected via: 4091700sofer@gmail.com (has view access to shared calendar)
 - Used for order pickup/delivery scheduling and appointment lookups
+
+
+## Production Readiness
+
+Use `docs/production-readiness-plan.md` as the release gate for production rollout. The legacy MVP plan is deprecated.
