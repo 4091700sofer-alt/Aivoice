@@ -36,7 +36,7 @@ Located in `/agent/` directory:
 | Auth | Replit Auth (OIDC), Passport.js |
 | Security | Helmet, CORS, express-rate-limit |
 | Voice Agent | livekit-agents, livekit-plugins-deepgram, livekit-plugins-openai |
-| Payments | Stripe (payment links) |
+| Payments | Twilio Pay (DTMF keypad capture) |
 
 ## Environment Variables
 
@@ -54,6 +54,12 @@ Located in `/agent/` directory:
 
 ### Optional Security
 - `AGENT_API_KEY` - API key for voice agent to access protected endpoints
+
+### Twilio Payments (Required for DTMF collection)
+- `TWILIO_ACCOUNT_SID` - Twilio account SID for voice + payments
+- `TWILIO_AUTH_TOKEN` - Twilio auth token
+- `TWILIO_PHONE_NUMBER` - Twilio voice number receiving orders
+- `TWILIO_PAY_CONNECTOR` - Twilio Pay connector name for DTMF collection
 
 ### Optional
 - `POWER_AUTOMATE_URL` - Microsoft Power Automate webhook URL
@@ -107,7 +113,7 @@ Logs show which model was used for each call.
 - `POST /api/orders` - Create order (public for voice agent)
 - `PATCH /api/orders/:id` - Update order
 - `PATCH /api/orders/:id/status` - Update order status
-- `POST /api/orders/:id/payment-link` - Send payment link (requires auth or agent API key)
+- `POST /api/orders/:id/payment-dtmf` - Start Twilio Pay DTMF payment flow (requires auth or agent API key)
 
 ### Order Items (multi-item order support)
 - `GET /api/orders/:id/items` - Get order items (public for voice agent)
@@ -149,7 +155,7 @@ Logs show which model was used for each call.
 1. **Create Order** - Takes matzah orders with customer details
 2. **Check Order Status** - Lookup orders by phone number
 3. **Get Customer History** - Check if caller has ordered before and offer their previous order
-4. **Send Payment Link** - Sends secure Stripe payment link via SMS
+4. **Collect DTMF Payment** - Runs Twilio Pay keypad flow during the call (no internet link required)
 5. **Transfer to Office** - SIP REFER transfer to office line
 6. **Get Bakery Info** - Hours, location, contact (uses dynamic settings)
 7. **Get Menu** - Matzah types and prices (uses dynamic settings)
@@ -224,3 +230,33 @@ The voice agent fetches fresh settings from `/api/business-settings` on each new
 - Google Calendar: Uses shared calendar from burechspitzer@gmail.com
 - Connected via: 4091700sofer@gmail.com (has view access to shared calendar)
 - Used for order pickup/delivery scheduling and appointment lookups
+
+
+## Production Readiness
+
+Use `docs/production-readiness-plan.md` as the release gate for production rollout. The legacy MVP plan is deprecated.
+
+## Deploying to Railway (PostgreSQL)
+
+Use `railway.json` for build/start defaults and follow `docs/railway-deployment.md` for production setup.
+
+Quick commands:
+- Build: `npm ci && npm run build`
+- Start: `npm run start`
+- Migrate DB: `npm run db:push`
+
+
+## Implemented Backend (Current Repo)
+
+The repository now includes a runnable Express backend in `server/index.ts` with:
+- `GET /healthz`
+- `POST /api/orders`
+- `GET /api/orders/:id`
+- `POST /api/orders/:id/payment-dtmf` (Twilio `<Pay>` TwiML response)
+- `POST /api/orders/:id/payment-dtmf/callback`
+- `POST /api/twilio/voice`
+- `POST /api/twilio/voice/route-payment`
+
+Database bootstrap is in `server/db.ts` (auto-creates `orders` table on startup).
+
+Protected API routes now require `AGENT_API_KEY` via `x-agent-api-key` or `Authorization: Bearer`. Twilio webhook routes validate `X-Twilio-Signature`.
